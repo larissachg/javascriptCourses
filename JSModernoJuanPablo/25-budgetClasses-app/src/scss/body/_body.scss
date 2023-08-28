@@ -1,0 +1,34 @@
+@use "../base/variables" as *;
+@use "../base/mixins" as m;
+
+.contenido {
+  padding:20px;
+  font-size: 1.5rem;
+
+  &-principal {
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+  }
+}
+
+.presupuesto p{
+  margin-bottom: 0;
+  font-weight: bold;
+
+  & span {
+    font-weight: normal;
+  }
+}
+
+#gastos {
+  margin-bottom: 30px;
+}
+
+.btn{
+  font-size: 1.2rem;
+}
+
+.form-control{
+  font-size: 1.2rem;
+}
