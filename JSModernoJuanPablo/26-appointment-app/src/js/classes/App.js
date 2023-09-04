@@ -1,4 +1,4 @@
-import {dataAppointment, newAppointment} from '../functions.js';
+import {dataAppointment, database, newAppointment} from '../functions.js';
 
 import {
   petInput,
@@ -16,6 +16,8 @@ export class App {
   }
 
   initApp() {
+    database();
+    
     petInput.addEventListener("change", dataAppointment);
     ownerInput.addEventListener("change", dataAppointment);
     phoneInput.addEventListener("change", dataAppointment);

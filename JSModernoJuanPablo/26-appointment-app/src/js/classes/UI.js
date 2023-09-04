@@ -1,6 +1,5 @@
-import { deleteAppointment, uploadEdition } from "../functions.js";
+import { DB, deleteAppointment, uploadEdition } from "../functions.js";
 import { appointmentList } from "../selectors.js";
-
 
 class UI {
   showAlert(message, type) {
@@ -29,61 +28,72 @@ class UI {
     }, 3000);
   }
 
-  showAppointments({ appointments }) {
+  showAppointments() {
     this.cleanHTML();
 
-    appointments.forEach((appointment) => {
-      const { pet, owner, phone, date, time, symptoms, id } = appointment;
+    //Leer el contenido de la base de datos
+    const objectStore = DB.transaction("citas").objectStore("citas");
 
-      const divAppointment = document.createElement("div");
-      divAppointment.classList.add("cita", "p-3");
-      divAppointment.dataset.id = id;
+    objectStore.openCursor().onsuccess = function(e) {
+      const cursor = e.target.result;
 
-      //Scripting de los elementos de la cita
-      const petBlock = document.createElement("h2");
-      petBlock.classList.add("card-title", "font-weight-bolder");
-      petBlock.textContent = pet;
+      if (cursor) {
+        const { pet, owner, phone, date, time, symptoms, id } = cursor.value;
 
-      const ownerBlock = document.createElement("p");
-      ownerBlock.innerHTML = `<span class="font-weight-bolder">Owner:</span> ${owner}`;
+        const divAppointment = document.createElement("div");
+        divAppointment.classList.add("cita", "p-3");
+        divAppointment.dataset.id = id;
 
-      const phoneBlock = document.createElement("p");
-      phoneBlock.innerHTML = `<span class="font-weight-bolder">Phone:</span> ${phone}`;
+        //Scripting de los elementos de la cita
+        const petBlock = document.createElement("h2");
+        petBlock.classList.add("card-title", "font-weight-bolder");
+        petBlock.textContent = pet;
 
-      const dateBlock = document.createElement("p");
-      dateBlock.innerHTML = `<span class="font-weight-bolder">Date:</span> ${date}`;
+        const ownerBlock = document.createElement("p");
+        ownerBlock.innerHTML = `<span class="font-weight-bolder">Owner:</span> ${owner}`;
 
-      const timeBlock = document.createElement("p");
-      timeBlock.innerHTML = `<span class="font-weight-bolder">Time:</span> ${time}`;
+        const phoneBlock = document.createElement("p");
+        phoneBlock.innerHTML = `<span class="font-weight-bolder">Phone:</span> ${phone}`;
 
-      const symptomsBlock = document.createElement("p");
-      symptomsBlock.innerHTML = `<span class="font-weight-bolder">Symptoms:</span> ${symptoms}`;
+        const dateBlock = document.createElement("p");
+        dateBlock.innerHTML = `<span class="font-weight-bolder">Date:</span> ${date}`;
 
-      //Boton para Eliminar una cita
-      const btnDelete = document.createElement("button");
-      btnDelete.classList.add("btn", "btn-danger", "mr-2");
-      btnDelete.innerHTML = "Eliminar";
-      btnDelete.onclick = () => deleteAppointment(id);
+        const timeBlock = document.createElement("p");
+        timeBlock.innerHTML = `<span class="font-weight-bolder">Time:</span> ${time}`;
 
-      //Boton para Editar una cita
-      const btnEdit = document.createElement("button");
-      btnEdit.classList.add("btn", "btn-info");
-      btnEdit.innerHTML = "Editar";
-      btnEdit.onclick = () => uploadEdition(appointment);
+        const symptomsBlock = document.createElement("p");
+        symptomsBlock.innerHTML = `<span class="font-weight-bolder">Symptoms:</span> ${symptoms}`;
 
-      //Agregar los parrafos al divAppointment
-      divAppointment.appendChild(petBlock);
-      divAppointment.appendChild(ownerBlock);
-      divAppointment.appendChild(phoneBlock);
-      divAppointment.appendChild(dateBlock);
-      divAppointment.appendChild(timeBlock);
-      divAppointment.appendChild(symptomsBlock);
-      divAppointment.appendChild(btnDelete);
-      divAppointment.appendChild(btnEdit);
+        //Boton para Eliminar una cita
+        const btnDelete = document.createElement("button");
+        btnDelete.classList.add("btn", "btn-danger", "mr-2");
+        btnDelete.innerHTML = "Eliminar";
+        btnDelete.onclick = () => deleteAppointment(id);
 
-      //Agregar las citas al HTML
-      appointmentList.appendChild(divAppointment);
-    });
+        //Boton para Editar una cita
+        const btnEdit = document.createElement("button");
+        btnEdit.classList.add("btn", "btn-info");
+        btnEdit.innerHTML = "Editar";
+        const appointment = cursor.value
+        btnEdit.onclick = () => uploadEdition(appointment);
+
+        //Agregar los parrafos al divAppointment
+        divAppointment.appendChild(petBlock);
+        divAppointment.appendChild(ownerBlock);
+        divAppointment.appendChild(phoneBlock);
+        divAppointment.appendChild(dateBlock);
+        divAppointment.appendChild(timeBlock);
+        divAppointment.appendChild(symptomsBlock);
+        divAppointment.appendChild(btnDelete);
+        divAppointment.appendChild(btnEdit);
+
+        //Agregar las citas al HTML
+        appointmentList.appendChild(divAppointment);
+
+        ///ve al siguiente elemento
+        cursor.continue();
+      }
+    };
   }
 
   cleanHTML() {
