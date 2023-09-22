@@ -1,0 +1,18 @@
+{
+  "clientes": [
+    {
+      "nombre": "Larissa",
+      "email": "larissachg@gmail.com",
+      "telefono": "76076775",
+      "empresa": "Udemy",
+      "id": 1
+    },
+    {
+      "nombre": "Daniel",
+      "email": "danielthames360@gmail.com",
+      "telefono": "77655430",
+      "empresa": "Encora",
+      "id": 2
+    }
+  ]
+}
